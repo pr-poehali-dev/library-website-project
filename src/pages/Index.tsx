@@ -1,118 +1,15 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import Icon from '@/components/ui/icon';
+import HomePage from '@/components/HomePage';
+import EncyclopediaPage from '@/components/EncyclopediaPage';
+import StoriesPage from '@/components/StoriesPage';
+import TimelinePage from '@/components/TimelinePage';
+import ArticleDialog from '@/components/ArticleDialog';
+import StoryDialog from '@/components/StoryDialog';
+import FavoritesSection from '@/components/FavoritesSection';
+import { mockArticles, mockStories, Article, Story } from '@/data/mockData';
 
-const mockArticles = [
-  {
-    id: 1,
-    title: 'Империя Солнечного Трона',
-    description: 'Крупнейшее государство континента с тысячелетней историей',
-    category: 'Великие государства',
-    tags: ['империя', 'политика', 'история'],
-    views: 1847,
-    lastUpdated: '2024-10-15',
-    content: `# Империя Солнечного Трона\n\nКрупнейшее и древнейшее государство континента.\n\n## История\n\nОснована более тысячи лет назад.\n\n## Политика\n\nАбсолютная монархия с советом лордов.`
-  },
-  {
-    id: 2,
-    title: 'Гильдия Теневых Клинков',
-    description: 'Тайная организация наёмных убийц и шпионов',
-    category: 'Гильдии',
-    tags: ['гильдия', 'убийцы', 'тайны'],
-    views: 2103,
-    lastUpdated: '2024-10-20',
-    content: `# Гильдия Теневых Клинков\n\nСамая опасная и влиятельная гильдия убийц.`
-  },
-  {
-    id: 3,
-    title: 'Дом Железной Розы',
-    description: 'Древний аристократический род, владеющий северными землями',
-    category: 'Дома/Кланы',
-    tags: ['дом', 'аристократия', 'север'],
-    views: 1456,
-    lastUpdated: '2024-10-18',
-    content: `# Дом Железной Розы\n\nОдин из старейших благородных домов континента.`
-  },
-  {
-    id: 4,
-    title: 'Пустоши Беспределья',
-    description: 'Дикие земли за границами цивилизации, где правит хаос',
-    category: 'Беспределье',
-    tags: ['беспределье', 'дикие земли', 'опасность'],
-    views: 3201,
-    lastUpdated: '2024-10-25',
-    content: `# Пустоши Беспределья\n\nОгромная территория за пределами известных королевств, где не действуют законы.`
-  },
-  {
-    id: 5,
-    title: 'Орден Пяти Клинков',
-    description: 'Легендарный рыцарский орден, защищающий мир от древнего зла',
-    category: 'Организации',
-    tags: ['орден', 'рыцари', 'герои'],
-    views: 4521,
-    lastUpdated: '2024-10-27',
-    content: `# Орден Пяти Клинков\n\nЛегендарный орден, названный в честь пяти легендарных мечей.`
-  },
-  {
-    id: 6,
-    title: 'Серый Волк - Изгнанник',
-    description: 'Бывший член Ордена, ставший ренегатом',
-    category: 'Ренегаты',
-    tags: ['ренегат', 'изгнанник', 'антигерой'],
-    views: 2876,
-    lastUpdated: '2024-10-22',
-    content: `# Серый Волк\n\nБывший капитан Ордена, изгнанный за нарушение клятвы.`
-  },
-  {
-    id: 7,
-    title: 'Горы Драконьего Хребта',
-    description: 'Неприступная горная цепь, разделяющая континент',
-    category: 'География',
-    tags: ['горы', 'география', 'драконы'],
-    views: 1923,
-    lastUpdated: '2024-10-19',
-    content: `# Горы Драконьего Хребта\n\nГигантская горная система, простирающаяся через весь континент.`
-  }
-];
-
-const mockStories = [
-  {
-    id: 1,
-    title: 'Клинок Рассвета',
-    description: 'Первый из пяти легендарных мечей находит нового владельца',
-    author: 'Автор мира',
-    readTime: '15 мин',
-    published: '2024-10-20',
-    tags: ['клинки', 'приключения', 'герои'],
-    content: `Меч лежал на алтаре уже триста лет. Пыль веков покрывала его рукоять, но клинок оставался чистым, словно только что вышел из горнила.\n\n"Это он?" — прошептал юноша, поднимаясь по ступеням древнего храма.\n\nСтарый страж кивнул:\n"Клинок Рассвета. Первый из Пяти. Но он сам выбирает своего владельца..."\n\nКогда пальцы юноши коснулись рукояти, меч вспыхнул золотым светом.`
-  },
-  {
-    id: 2,
-    title: 'Тени Беспределья',
-    description: 'Караван путников сталкивается с опасностями диких земель',
-    author: 'Автор мира',
-    readTime: '20 мин',
-    published: '2024-10-15',
-    tags: ['беспределье', 'выживание', 'приключения'],
-    content: `За последними холмами цивилизация заканчивалась. Караван остановился на границе — впереди простирались бесконечные пустоши Беспределья.\n\n"Последний шанс повернуть назад," — сказал проводник, глядя на темнеющий горизонт.\n\nНо никто не дрогнул. У каждого были свои причины идти в проклятые земли...`
-  }
-];
-
-const categories = [
-  'Все', 
-  'Великие государства', 
-  'Беспределье', 
-  'Гильдии', 
-  'Дома/Кланы', 
-  'Организации', 
-  'Ренегаты', 
-  'География'
-];
 const allTags = Array.from(new Set(mockArticles.flatMap(a => a.tags)));
 
 export default function Index() {
@@ -121,8 +18,8 @@ export default function Index() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<'home' | 'encyclopedia' | 'timeline' | 'stories'>('home');
-  const [selectedArticle, setSelectedArticle] = useState<typeof mockArticles[0] | null>(null);
-  const [selectedStory, setSelectedStory] = useState<typeof mockStories[0] | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => 
@@ -240,305 +137,39 @@ export default function Index() {
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {activeTab === 'home' && (
-          <div className="max-w-4xl mx-auto">
-            <Card className="bg-card/80 border-2 border-primary/40 shadow-xl backdrop-blur">
-              <CardHeader className="text-center border-b-2 border-primary/20">
-                <CardTitle className="text-3xl mb-4">Добро пожаловать в хроники</CardTitle>
-                <CardDescription className="text-lg">
-                  Откройте для себя мир, где легенды оживают, а судьбы переплетаются с древними пророчествами
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid md:grid-cols-3 gap-6">
-                  <button
-                    onClick={() => setActiveTab('encyclopedia')}
-                    className="p-6 bg-background/50 border-2 border-primary/30 rounded-lg hover:border-primary transition-all hover:shadow-lg group"
-                  >
-                    <Icon name="Book" size={32} className="mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-                    <h3 className="font-semibold text-lg mb-2">Энциклопедия</h3>
-                    <p className="text-sm text-muted-foreground">Изучите мир, его народы и легенды</p>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('timeline')}
-                    className="p-6 bg-background/50 border-2 border-primary/30 rounded-lg hover:border-primary transition-all hover:shadow-lg group"
-                  >
-                    <Icon name="Clock" size={32} className="mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-                    <h3 className="font-semibold text-lg mb-2">История</h3>
-                    <p className="text-sm text-muted-foreground">Путешествие сквозь века</p>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('stories')}
-                    className="p-6 bg-background/50 border-2 border-primary/30 rounded-lg hover:border-primary transition-all hover:shadow-lg group"
-                  >
-                    <Icon name="FileText" size={32} className="mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-                    <h3 className="font-semibold text-lg mb-2">Рассказы</h3>
-                    <p className="text-sm text-muted-foreground">Истории из мира хроник</p>
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <HomePage onNavigate={setActiveTab} />
         )}
 
         {activeTab === 'encyclopedia' && (
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="bg-card/80 border-2 border-primary/40 flex-wrap h-auto mb-6 p-2">
-              {categories.map(cat => (
-                <TabsTrigger 
-                  key={cat} 
-                  value={cat} 
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground border border-primary/20 data-[state=active]:border-primary"
-                >
-                  {cat}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            <TabsContent value={selectedCategory}>
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                  <Icon name="Tag" size={16} />
-                  Метки
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {allTags.map(tag => (
-                    <Badge
-                      key={tag}
-                      variant={selectedTags.includes(tag) ? "default" : "outline"}
-                      className="cursor-pointer transition-all hover:scale-105 border-primary/40"
-                      onClick={() => toggleTag(tag)}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredArticles.map((article, index) => (
-                  <Card 
-                    key={article.id} 
-                    className="bg-card/80 border-2 border-primary/40 hover:border-primary transition-all duration-300 cursor-pointer group animate-fade-in shadow-lg hover:shadow-xl backdrop-blur"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                    onClick={() => setSelectedArticle(article)}
-                  >
-                    <CardHeader>
-                      <div className="flex justify-between items-start mb-2">
-                        <Badge variant="secondary" className="text-xs border border-primary/30">
-                          {article.category}
-                        </Badge>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(article.id);
-                          }}
-                          className="transition-transform hover:scale-110"
-                        >
-                          <Icon 
-                            name="Star"
-                            size={20} 
-                            className={favorites.includes(article.id) ? "fill-primary text-primary" : "text-muted-foreground"}
-                          />
-                        </button>
-                      </div>
-                      <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                        {article.title}
-                      </CardTitle>
-                      <CardDescription className="text-muted-foreground">
-                        {article.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {article.tags.map(tag => (
-                          <Badge key={tag} variant="outline" className="text-xs border-primary/30">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Icon name="Eye" size={14} />
-                          <span>{article.views.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Icon name="Calendar" size={14} />
-                          <span>{new Date(article.lastUpdated).toLocaleDateString('ru-RU')}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {filteredArticles.length === 0 && (
-                <div className="text-center py-12">
-                  <Icon name="Search" size={48} className="mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground text-lg">Записи не найдены</p>
-                  <p className="text-sm text-muted-foreground mt-2">Попробуйте изменить параметры поиска</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+          <>
+            <EncyclopediaPage
+              articles={filteredArticles}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              selectedTags={selectedTags}
+              onToggleTag={toggleTag}
+              allTags={allTags}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              onArticleClick={setSelectedArticle}
+            />
+            <FavoritesSection
+              articles={mockArticles}
+              favorites={favorites}
+              onArticleClick={setSelectedArticle}
+            />
+          </>
         )}
 
-        {activeTab === 'timeline' && (
-          <Card className="bg-card/80 border-2 border-primary/40 shadow-xl backdrop-blur">
-            <CardHeader className="border-b-2 border-primary/20">
-              <CardTitle className="text-2xl">Хронология событий</CardTitle>
-              <CardDescription>Временная линия истории мира</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="text-center py-12">
-                <Icon name="Clock" size={64} className="mx-auto text-primary mb-4" />
-                <p className="text-muted-foreground text-lg">Хронология в разработке</p>
-                <p className="text-sm text-muted-foreground mt-2">Скоро здесь появится подробная временная шкала событий</p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {activeTab === 'timeline' && <TimelinePage />}
 
         {activeTab === 'stories' && (
-          <div className="space-y-6">
-            {filteredStories.map((story, index) => (
-              <Card 
-                key={story.id}
-                className="bg-card/80 border-2 border-primary/40 hover:border-primary transition-all duration-300 cursor-pointer animate-fade-in shadow-lg hover:shadow-xl backdrop-blur"
-                style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => setSelectedStory(story)}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-2xl mb-2 hover:text-primary transition-colors">
-                        {story.title}
-                      </CardTitle>
-                      <CardDescription className="text-muted-foreground mb-3">
-                        {story.description}
-                      </CardDescription>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Icon name="User" size={16} />
-                          {story.author}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Icon name="Clock" size={16} />
-                          {story.readTime}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Icon name="Calendar" size={16} />
-                          {new Date(story.published).toLocaleDateString('ru-RU')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {story.tags.map(tag => (
-                      <Badge key={tag} variant="outline" className="border-primary/30">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {favorites.length > 0 && activeTab === 'encyclopedia' && (
-          <div className="mt-12 pt-8 border-t-2 border-primary/40">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Icon name="Star" size={24} className="text-primary fill-primary" />
-              Избранное
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {mockArticles.filter(a => favorites.includes(a.id)).map(article => (
-                <Card 
-                  key={article.id} 
-                  className="bg-card/80 border-2 border-primary/40 cursor-pointer hover:border-primary transition-colors backdrop-blur"
-                  onClick={() => setSelectedArticle(article)}
-                >
-                  <CardHeader>
-                    <CardTitle className="text-lg">{article.title}</CardTitle>
-                    <CardDescription className="text-sm">{article.category}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-          </div>
+          <StoriesPage stories={filteredStories} onStoryClick={setSelectedStory} />
         )}
       </div>
 
-      <Dialog open={!!selectedArticle} onOpenChange={() => setSelectedArticle(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh] bg-card/95 border-2 border-primary/40 backdrop-blur">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">{selectedArticle?.title}</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground border-b-2 border-primary/20 pb-4">
-                <Badge variant="secondary" className="border border-primary/30">{selectedArticle?.category}</Badge>
-                <span className="flex items-center gap-1">
-                  <Icon name="Eye" size={16} />
-                  {selectedArticle?.views.toLocaleString()}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Icon name="Calendar" size={16} />
-                  {selectedArticle && new Date(selectedArticle.lastUpdated).toLocaleDateString('ru-RU')}
-                </span>
-              </div>
-              <div className="prose prose-invert max-w-none">
-                <div className="whitespace-pre-wrap text-foreground leading-relaxed text-lg">
-                  {selectedArticle?.content}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-4 border-t-2 border-primary/20">
-                {selectedArticle?.tags.map(tag => (
-                  <Badge key={tag} variant="outline" className="border-primary/30">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!selectedStory} onOpenChange={() => setSelectedStory(null)}>
-        <DialogContent className="max-w-4xl max-h-[80vh] bg-card/95 border-2 border-primary/40 backdrop-blur">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-primary">{selectedStory?.title}</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground border-b-2 border-primary/20 pb-4">
-                <span className="flex items-center gap-1">
-                  <Icon name="User" size={16} />
-                  {selectedStory?.author}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Icon name="Clock" size={16} />
-                  {selectedStory?.readTime}
-                </span>
-              </div>
-              <div className="prose prose-invert max-w-none">
-                <div className="whitespace-pre-wrap text-foreground leading-relaxed text-lg" style={{ textAlign: 'justify' }}>
-                  {selectedStory?.content}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-4 border-t-2 border-primary/20">
-                {selectedStory?.tags.map(tag => (
-                  <Badge key={tag} variant="outline" className="border-primary/30">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      <ArticleDialog article={selectedArticle} onClose={() => setSelectedArticle(null)} />
+      <StoryDialog story={selectedStory} onClose={() => setSelectedStory(null)} />
     </div>
   );
 }
