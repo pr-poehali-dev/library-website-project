@@ -137,7 +137,7 @@ export default function Index() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-primary">Хроники Забытых Земель</h1>
+              <h1 className="text-3xl font-bold text-primary">Пять Клинков и Беспределье</h1>
               <p className="text-sm text-muted-foreground mt-1">Энциклопедия авторского мира</p>
             </div>
             <div className="flex gap-3">
